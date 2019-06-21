@@ -188,12 +188,11 @@ def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WI
     drawing_window = display(HTML(_genereateSvgDrawing()), display_id=True)
     #go()
     
-
+#remember to call this to actually run the animation!
 def go():
     _updateDrawing()
 
 # helper function for generating svg string of the turtle
-
 def _generate_svg_animation_string():
     
     #determine the duration of the animation
@@ -209,6 +208,7 @@ def _generate_svg_animation_string():
     #print(speed,t)
     return svg_animation_string.format(duration = "{:.2f}s".format(t))
 
+#helper function to draw the turtle
 def _generateTurtleSvgDrawing():
     if is_turtle_visible:
         vis = '"visible"'
@@ -221,11 +221,10 @@ def _generateTurtleSvgDrawing():
                                         visibility      =vis, 
                                         degrees         =missions.start_degree, 
                                         label           =robot_name)
-    
     #print(out)
-    
     return out
 
+#helper function to assemble the svg path coordinates
 def _generate_svg_path_string():
         
     p = "d = '" + svg_path + "'"
@@ -351,12 +350,15 @@ def _pendown():
     # TODO: decide if we should put the timout after releasing the pen
     # _updateDrawing()
 
+#return the orientation of the robot. Clockwise from North.
 def get_degree():
     return "rover is at {:.2f} degrees.".format((turtle_degree - 270.0) % 360.0)
 
+#overall distance travelled along it's path
 def get_travel():
     return turtle_travel
-
+    
+#call this to give the robot a name
 def set_name(s=""):
     global robot_name
     
@@ -366,7 +368,7 @@ def set_name(s=""):
     robot_name = s
     
 
-# update the speed of the moves, [1,10]
+# update the speed of the robot. If = 0 then the animation time is fixed to 4 seconds.
 def set_speed(s):
 
     global speed
@@ -417,7 +419,7 @@ def showturtle():
     _updateDrawing()
 
 
-# switch turtle visibility to ON
+# switch turtle visibility to OFF
 def hideturtle():
     global is_turtle_visible
 
@@ -458,7 +460,7 @@ def width(width):
     # TODO: decide if we should put the timout after changing the speed
     # _updateDrawing()
     
-
+#call this to load the missions, then call r.missions.start(n) to start mission n
 def loadMissions(folder = MISSION_FOLDER):
     global missions
 
@@ -490,8 +492,8 @@ class Missions(object):
         self.start_deg = {k : v[2] for k,v in data.items()}
         self.current_mission = 0
     
+    #call to begin a new mission
     def start(self,n=0):
-        
         global turtle_pos
         global turtle_degree
         
@@ -507,20 +509,22 @@ class Missions(object):
         #set up all other default values
         initializeTurtle()
         
-    
+    #returns the path of the background image
     def bg_file(self):
         if self.current_mission not in self.start_pos.keys(): 
             return None
         else:
             out = self.folder + "{:0>3}.jpeg".format(self.current_mission)
             return out
-    
+            
+    #returns the robot's starting position for the current mission
     def start_position(self):
         if self.current_mission not in self.start_pos.keys(): 
             return (DEFAULT_WINDOW_SIZE[0] // 2, DEFAULT_WINDOW_SIZE[1] // 2)
         else:
             return self.start_pos[self.current_mission]
-        
+    
+    #returns the robot's starting degree for the current mission
     def start_degree(self):
         if self.current_mission not in self.start_pos.keys(): 
             return 270
